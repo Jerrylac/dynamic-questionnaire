@@ -15,7 +15,7 @@
     </div>
     <div class="ioc">
       <i class="fa-solid fa-trash"></i>
-      <i class="fa-solid fa-plus"></i>
+      <i class="fa-solid fa-plus" @click="goAddNewInformation()"></i>
     </div>
     <div class="bottom">
   <table>
@@ -127,7 +127,11 @@
 </template>
 <script>
 export default {
-  
+  methods:{
+    goAddNewInformation(){
+            this.$router.push('/AddNewInformation')
+        }
+  }
 }
 </script>
 <style scoped lang="scss">
