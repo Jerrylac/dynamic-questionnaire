@@ -27,10 +27,10 @@
     <tr>
       <td>編號1</td>
       <td class="chLink" @click="goQuestionnaireContent()">一個名稱</td>
+      <td><input type="text" v-model="userInfo.accout" name="" id=""></td>
+      <td><input type="text" v-model="userInfo.password" name="" id=""></td>
       <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td class="chLink" @click="">前往</td>
+      <td class="chLink" @click="test()">前往</td>
     </tr>
     <tr>
       <td>編號2</td>
@@ -111,12 +111,37 @@
   </div>
 </template>
 <script>
+
+
 export default {
+  data(){
+    return{
+      userInfo:{
+        accout:"",
+        password:""
+      }
+    }
+  },
+  mounted() {
+    // this.test();
+  },
   methods:{
         goQuestionnaireContent(){
             this.$router.push('/QuestionnaireContent')
+        },
+        test(){
+          const apiUrl=('https://localhost:8080/api/login');
+          axios.post(apiUrl,
+          {
+            account:this.userInfo.accout,
+            password:this.userInfo.password
+          }
+          ).then(res=>{
+            console.log("登入成功");
+          })
         }
-    }
+    },
+    
 }
 </script>
 <style scoped lang="scss">

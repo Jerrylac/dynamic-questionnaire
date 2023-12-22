@@ -17,14 +17,21 @@
             <input type="date" name="" id="">
         </div>
         <div class="btnBox">
-            <button type="button">取消</button>
-            <button type="button">下一步</button>
+            <button type="button" @click="goAbout()">取消</button>
+            <button type="button" @click="goTopic()">下一步</button>
         </div>
     </div>
 </template>
 <script>
 export default {
-    
+    methods:{
+        goTopic(){
+            this.$router.push('/AddNewInformation/Topic')
+        },
+        goAbout(){
+            this.$router.push('/about')
+        }
+    }
 }
 </script>
 <style scoped lang="scss">
