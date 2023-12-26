@@ -1,11 +1,11 @@
 <template>
-    <div class="main">
+    <div class="main1">
         <div class="dataTime">
-            <span>2023/12/6~2024/2/2</span>
+            <span>{{this.quizBox.startData}}~{{this.quizBox.endDate}}</span>
         </div>
         <div class="titleText">
-            <h1>青春洋溢高中生人氣投票戰</h1>
-            <p>西過卜竹每道夕洋。何綠頁結四定羽麼但請飯：帽幸蝴急歡胡念占在步乾乞立收犬浪，哪很麼肉果毛尾皮要雨叫牙哪几立，法冰個貝邊內怎歡方兄；斗洋告但後已跑荷放高抄多申未會！國了誰習後但。 米二米每彩羊已乞得河有去已種米。遠意喜只多斤工外。到羊刀南，這位姐由立燈四枝各刃出樹他喝汁，面七戶冬服頁好包朵正：打息用書己國現、重里具雞邊送身。</p>
+            <h1>{{this.quizBox.name}}</h1>
+            <p>{{this.quizBox.defineComponent}}</p>
         </div>
         <div class="textInp">
             <div class="name">
@@ -25,7 +25,7 @@
                 <input type="text" name="" id="">
             </div>
         </div>
-        <div class="question">
+        <div class="question" v-for="item in this.question">
             <span>1.問題 使用v-for</span>
             <div class="answer">
                 <input type="radio" name="" id="">
@@ -45,6 +45,21 @@
 </template>
 <script>
 export default {
+    data(){
+        return{
+            question:this.questionArr,
+            // arr:[],
+            // //問題名稱
+            // title:"",
+            // //選項樣式
+            // type:"",
+            // //是否必填
+            // necessary:false,
+            // //選項內容
+            // options:[],
+
+        }
+    },
     methods:{
         goHomeView(){
             this.$router.push('/about')
@@ -55,20 +70,29 @@ export default {
             window.alert("已發布")
         }
 
-    }
+    },
+    mounted(){
+        // this.arr.push(this.question)
+        // console.log(this.arr);
+    },
+    inject:[
+    "quizBox",
+    ],
+    props:[
+        "questionArr",
+    ]
 }
 </script>
 <style scoped lang="scss">
-    .main{
-        width: 80%;
-        height: 140vmin;
-        margin-left: 25vmin;
+    .main1{
         margin-top: 3vmin;
         background-color: white;
+        overflow-y: scroll;
+        overflow-x: hidden;
         .dataTime{
             width: 100%;
             padding-top: 2vmin;
-            padding-left: 150vmin;
+            padding-left: 120vmin;
         }
         .titleText{
             width: 150vmin;
@@ -132,7 +156,7 @@ export default {
             width: 40vmin;
             margin-top: 5vmin;
             margin-left: 10vmin;
-            padding-left: 120vmin;
+            padding-left: 100vmin;
             button{
                 width: 15vmin;
                 height: 5vmin;
@@ -148,4 +172,18 @@ export default {
             }
         }
     }
+    .main1::-webkit-scrollbar{
+        width: 10px;
+      }
+      .main1::-webkit-scrollbar-track {
+        background: #3b73b8;
+        border-radius: 10px;
+      }
+      .main1::-webkit-scrollbar-thumb {
+        background: #aec3d7;
+        border-radius: 10px;
+      }
+      .main1::-webkit-scrollbar-thumb:hover {
+  background: #fff;
+}
 </style>

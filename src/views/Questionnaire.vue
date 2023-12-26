@@ -23,7 +23,11 @@
     </div>
 </template>
 <script>
+import Topic from './Topic.vue'
 export default {
+    components:{
+        Topic
+    },
     methods:{
         goTopic(){
             this.$router.push('/AddNewInformation/Topic')

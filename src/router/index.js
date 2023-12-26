@@ -34,32 +34,13 @@ const router = createRouter({
       component: () => import('../views/ConfirmationPage.vue')
     },
     {
-      path: '/QuestionnaireConfirmation',
-      name: 'QuestionnaireConfirmation',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/QuestionnaireConfirmation.vue')
-    },
-    {
       path: '/AddNewInformation',
       name: 'AddNewInformation',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      redirect: '/AddNewInformation/Questionnaire',
       component: () => import('../views/AddNewInformation.vue'),
-      children:[
-        {
-          path:'Questionnaire',
-          component: () => import('../views/Questionnaire.vue'),
-        },
-        {
-          path:'Topic',
-          component: () => import('../views/Topic.vue'),
-        },
-      ]
-    }
+    },
   ]
 })
 

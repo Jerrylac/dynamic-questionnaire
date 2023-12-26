@@ -3,14 +3,15 @@
     <div class="top">
       <div class="nameInp">
         <span>問卷名稱:</span>
-        <input type="text" value="青春洋溢高中生人氣投票戰" name="" id="">
+        <input type="text"  name="" id="">
+        <!-- v-model="this.search.name" -->
       </div>
       <div class="timeInp">
-        <span>統計時間:</span>
-        <input type="date" name="" id="">
-        <span>到</span>
-        <input type="date" name="" id="">
-        <button type="button">搜尋</button>
+        <span>開始時間:</span>
+        <input type="date" name="" id="" v-model="this.search.stardate">
+        <span>結束時間:</span>
+        <input type="date" name="" id="" v-model="this.search.enddate">
+        <button type="button" @click="">搜尋</button>
       </div>
     </div>
     <div class="bottom">
@@ -27,22 +28,22 @@
     <tr>
       <td>編號1</td>
       <td class="chLink" @click="goQuestionnaireContent()">一個名稱</td>
-      <td><input type="text" v-model="userInfo.accout" name="" id=""></td>
+      <td><input type="text" v-model="userInfo.account" name="" id=""></td>
       <td><input type="text" v-model="userInfo.password" name="" id=""></td>
       <td>123</td>
-      <td class="chLink" @click="test()">前往</td>
+      <td class="chLink" @click="loginUser()">前往</td>
     </tr>
     <tr>
       <td>編號2</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
+      <td><input type="text" v-model="this.search.name" name="" id=""></td>
+      <td><input type="text" v-model="this.search.description" name="" id=""></td>
+      <td><input type="date" v-model="this.search.stardate" name="" id=""></td>
+      <td><input type="date" v-model="this.search.enddate" name="" id=""></td>
+      <td class="chLink" @click="test()">123</td>
     </tr>
     <tr>
       <td>編號3</td>
-      <td>123</td>
+      <td><input type="text" v-model="this.search.questionList" name="" id=""></td>
       <td>123</td>
       <td>123</td>
       <td>123</td>
@@ -111,14 +112,27 @@
   </div>
 </template>
 <script>
-
+import axios from 'axios';
 
 export default {
   data(){
     return{
       userInfo:{
-        accout:"",
+        account:"",
         password:""
+      },
+      search:{
+        name:"",
+        description:"",
+        stardate:"",
+        enddate:"",
+        questionList:[{
+          num:"",
+          title:"",
+          type:"",
+          necessary:false,
+          options:""
+        }]
       }
     }
   },
@@ -129,16 +143,34 @@ export default {
         goQuestionnaireContent(){
             this.$router.push('/QuestionnaireContent')
         },
+        loginUser(){
+          axios({
+            url:'http://localhost:8080/api/login',
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            },
+            data:{
+              account: this.userInfo.account,
+              password: this.userInfo.password
+            },
+          }).then(res=>console.log(res))
+        },
         test(){
-          const apiUrl=('https://localhost:8080/api/login');
-          axios.post(apiUrl,
-          {
-            account:this.userInfo.accout,
-            password:this.userInfo.password
-          }
-          ).then(res=>{
-            console.log("登入成功");
-          })
+          axios({
+            url:'http://localhost:8080/quiz/create',
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            },
+            data:{
+              name:this.search.name,
+              description:this.search.description,
+              start_data:this.search.stardate,
+              end_data:this.search.enddate,
+              question_list:this.search.questionList
+            },
+          }).then(res=>console.log(res))
         }
     },
     
