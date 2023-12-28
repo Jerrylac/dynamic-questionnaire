@@ -20,7 +20,7 @@
             <input type="text" name="" id="" v-model="this.options">
             <button type="button" @click="join()">加入</button>
         </div>
-        <i class="fa-solid fa-trash"></i>
+        
         <div class="tab">
             <table>
                 <thead>
@@ -33,25 +33,68 @@
                 </thead>
                 <tbody>
                     <tr v-for="(item,index) in this.question">
-                        <td><input type="checkbox" name="" id=""></td>
+                        <td><i @click="deleteData(index)" class="fa-solid fa-trash"></i></td>
                         <td>{{ index+1 }}</td>
                         <td>{{item.title}}</td>
                         <td>{{ item.type }}</td>
                         <td><input type="checkbox" v-model="item.necessary" name="" id="" disabled></td>
-                        <td>{{ item.options }}</td>
+                        <td><button type="button" @click="getindex(index)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">編輯</button>
+                        </td>
+                        <!-- {{ item.options }} -->
                     </tr>
                     
                 </tbody>
             </table>
+            
             <div class="btnBox">
                 <button type="button" @click="goQuestionnaire()">上一步</button>
                 <button type="button" @click="goQuestionnaireContent()" >送出</button>
             </div>
         </div>
     </div>
+    
     <div class="box" v-if="boxBo">
         <QuestionnaireConfirmation :questionArr="this.question"/>
     </div>  
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">問題名稱:</label>
+            <input type="text" v-model="this.reviseTitle" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <select v-model="this.reviseType" name="" id="">
+                <option value="">請選擇</option>
+                <option value="單選題">單選題</option>
+                <option value="復選題">復選題</option>
+                <option value="短述題">短述題</option>
+            </select>
+            <input type="checkbox" class="chBox" name="necessary" value="true" v-model="this.reviseNecessary" id="">
+            <span>必填</span>
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">選項:</label>
+            <textarea v-model="this.reviseOptions" class="form-control" id="message-text"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="reviseData()">確認修改</button>
+      </div>
+    </div>
+  </div>
+</div>
 </template>
 <script>
 import QuestionnaireConfirmation from './QuestionnaireConfirmation.vue'
@@ -70,7 +113,18 @@ export default {
             necessary:false,
             //選項內容
             options:"",
-            question:[]
+            question:[],
+
+            reviseNum:"",
+            //問題名稱
+            reviseTitle:"",
+            //選項樣式
+            reviseType:"",
+            //是否必填
+            reviseNecessary:false,
+            //選項內容
+            reviseOptions:"",
+
         }
     },
     mounted(){
@@ -93,13 +147,45 @@ export default {
                 this.type=""
                 return
             }
-            const opt =this.options.split(',')
-            this.question.push({title:this.title,type:this.type,necessary:this.necessary,options:opt})
+            // const opt =this.options.split(',')
+            this.question.push({title:this.title,type:this.type,necessary:this.necessary,options:this.options})
             this.title=""
             this.type=""
             this.necessary=false
             this.options=""
             // console.log(this.question);
+        },
+        getindex(index){
+            this.question.forEach((item,index1)=>{
+                if(index1!=index){
+                    return
+                }
+                this.reviseNum=index
+                this.reviseTitle=item.title
+                this.reviseType=item.type
+                this.reviseNecessary=item.necessary
+                this.reviseOptions=item.options 
+                console.log(this.reviseNum);
+            })
+        },
+        reviseData(){
+            // console.log(this.question);
+            this.question.forEach((item,index)=>{
+                if(this.reviseNum!=index){
+                    return
+                }
+                item.title=this.reviseTitle
+                item.type=this.reviseType
+                item.necessary=this.reviseNecessary
+                item.options=this.reviseOptions 
+            })
+        },
+        deleteData(index){
+            const btnDelete=window.confirm("確定要刪除嗎?")
+            if(btnDelete){
+                this.question.splice(index,1)
+                console.log(this.question);
+            }
         }
     },
     components:{
@@ -112,6 +198,8 @@ export default {
     .main{
         width: 150vmin;
         height: 60vmin;
+        padding-top: 2vmin;
+        padding-left: 2vmin;
         background-color: #fff;
         .top{
             margin-bottom: 1vmin;
@@ -154,8 +242,8 @@ export default {
             }
         }
         .fa-trash{
-        font-size: 5vmin;
-        margin-right: 1vmin;
+        font-size: 3vmin;
+        margin-left: 1vmin;
         cursor: pointer;
         }
         .tab{
@@ -165,9 +253,11 @@ export default {
                 thead{
                     background-color: aquamarine;
                 }
+                
             }
             .btnBox{
                 margin-top: 2vmin;
+                margin-left: 120vmin;
                 button{
                     width: 10vmin;
                     height: 4vmin;
@@ -180,9 +270,12 @@ export default {
                     color: white;
                 }
                 }
-                margin-left: 128vmin;
+                
             }
         }
+    }
+    .chBox{
+        margin-left: 1vmin;
     }
     .box{
         background-color: #fff;

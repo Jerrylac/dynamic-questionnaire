@@ -2,10 +2,10 @@
   <div class="mainBox">
     <div class="left" v-if="left">
       <div class="question" @click="getquestion()">
-        <h1>問卷</h1>
+        <span>問卷</span>
       </div>
       <div class="topic" @click="getTopic()">
-        <h1>題目</h1>
+        <span>題目</span>
       </div>
     </div>
     <div class="right">
@@ -82,9 +82,9 @@ export default {
     getTopic() {
       this.test = true;
     },
-    gettest(xxx) {
-      this.test = xxx;
-    },
+    // gettest(xxx) {
+    //   this.test = xxx;
+    // },
     getleft(xxx) {
       this.left = xxx;
     },
@@ -105,15 +105,17 @@ export default {
     width: 150vmin;
     padding-top: 1vmin;
     background-color: white;
-    border: 1px solid black;
+    border-bottom: 1px solid black;
     height: 7vmin;
     display: flex;
     .question {
       margin-left: 2vmin;
       margin-right: 2vmin;
+      font-size: 4vmin;
       cursor: pointer;
     }
     .topic {
+      font-size: 4vmin;
       cursor: pointer;
     }
   }
@@ -124,7 +126,8 @@ export default {
     .main {
       width: 150vmin;
       height: 60vmin;
-      padding-top: 10vmin;
+      padding-top: 1vmin;
+      padding-left: 5vmin;
       background-color: #fff;
       border: 1px solid black;
       .illustrateInp {
@@ -166,7 +169,8 @@ export default {
       }
 
       .btnBox {
-        margin-top: 25vmin;
+        margin-top: 15vmin;
+        margin-left: auto;
         width: 60vmin;
         // background-color: black;
         // margin-left: 1vmin;

@@ -3,18 +3,18 @@
     <div class="top">
       <div class="nameInp">
         <span>問卷名稱:</span>
-        <input type="text" value="青春洋溢高中生人氣投票戰" name="" id="">
+        <input type="text" v-model="this.name" name="" id="">
       </div>
       <div class="timeInp">
-        <span>統計時間:</span>
-        <input type="datetime-local" name="" id="">
-        <span>到</span>
-        <input type="datetime-local" name="" id="">
-        <button type="button">搜尋</button>
+        <span>開始時間:</span>
+        <input type="date" v-model="this.startData" name="" id="">
+        <span>結束時間</span>
+        <input type="date" v-model="this.endDate" name="" id="">
+        <button type="button"  @click="getdata()">搜尋</button>
       </div>
     </div>
     <div class="ioc">
-      <i class="fa-solid fa-trash"></i>
+      
       <i class="fa-solid fa-plus" @click="goAddNewInformation()"></i>
     </div>
     <div class="bottom">
@@ -28,116 +28,183 @@
     <td>結束時間</td>
     <td>結果</td>
   </thead>
-  <tbody>
-    <tr>
-      <td><input type="checkbox" name="" id=""></td>
-      <td>編號1</td>
+  <tbody v-for="item in this.search">
+    <tr  v-for="(item1,index) in item">
+      <td><i class="fa-solid fa-trash"></i></td>
+      <td>{{index+1}}</td>
+      <td><button type="button" @click="upData(index)" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">{{ item1.name }}</button></td>
+      <td>{{item1.published}}</td>
+      <td>{{ item1.startDate }}</td>
+      <td>{{ item1.endDate }}</td>
       <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
+      <!-- {{ item1.questionStr }} -->
     </tr>
-    <tr>
-      <td><input type="checkbox" name="" id=""></td>
-      <td>編號2</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td><input type="checkbox" name="" id=""></td>
-      <td>編號3</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td><input type="checkbox" name="" id=""></td>
-      <td>編號4</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td><input type="checkbox" name="" id=""></td>
-      <td>編號5</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td><input type="checkbox" name="" id=""></td>
-      <td>編號6</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td><input type="checkbox" name="" id=""></td>
-      <td>編號7</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td><input type="checkbox" name="" id=""></td>
-      <td>編號8</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td><input type="checkbox" name="" id=""></td>
-      <td>編號9</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td><input type="checkbox" name="" id=""></td>
-      <td>編號10</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
+   
   </tbody>
 </table>
     </div>
 
   </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">問卷名稱:</label>
+            <input type="text" v-model="this.upName" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">問卷說明:</label>
+            <textarea v-model="this.upDescription" class="form-control" id="message-text"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">開始時間:</label>
+            <input type="date" v-model="this.upStartData" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">結束時間:</label>
+            <input type="date" v-model="this.upEndDate" class="form-control" id="recipient-name">
+          </div>
+          <div class="queiont" v-for="(item,index) in upquestionList">
+            <div class="num">第{{ index+1 }}題</div>
+            <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">問題名稱:</label>
+            <input type="text" v-model="item.title" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <select v-model="item.type" name="" id="">
+                <option value="">請選擇</option>
+                <option value="單選題">單選題</option>
+                <option value="復選題">復選題</option>
+                <option value="短述題">短述題</option>
+            </select>
+            <input type="checkbox" class="chBox" name="necessary" value="true" v-model="item.necessary" id="">
+            <span>必填</span>
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">選項(有多筆問題請以 , 分隔):</label>
+            <textarea v-model="item.options" class="form-control" id="message-text"></textarea>
+          </div>
+          <hr>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="reviseData()">確認修改</button>
+      </div>
+    </div>
+  </div>
+</div>
 </template>
 <script>
+import axios from 'axios';
+
 export default {
+  data(){
+    return{
+      search:[],
+      name:"",
+      startData:"",
+      endDate:"",
+      upName:"",
+      upStartData:"",
+      upEndDate:"",
+      upDescription:"",
+      upquestionList:"",
+    }
+  },
   methods:{
     goAddNewInformation(){
             this.$router.push('/AddNewInformation')
-        }
+    },
+    getdata(){
+      axios({
+            url:'http://localhost:8080/quiz/search',
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            },
+            data:{
+              quiz_name:this.name,
+              start_data:this.startData,
+              end_data:this.endDate,
+              is_longin:true,
+            //   Object.values(this.question).map(question => question)
+              is_published:false
+            },
+          }).then(res=>{
+            if(this.search.length!=0){
+              this.search.length=0
+              this.search.push(res.data.quizList)
+              this.name=""
+              this.startData=""
+              this.endDate=""
+              console.log(res.data)
+              return
+            }
+            
+            
+            // console.log(this.search);
+            })
+    },
+    upData(index){
+      this.search.forEach(search=>{
+        search.forEach((item,itemIndex)=>{
+          if(itemIndex!=index){
+            return
+          }
+          let test=item.questionStr
+          this.upName=item.name
+          this.upDescription=item.description
+          this.upStartData=item.startDate
+          this.upEndDate=item.endDate
+          if(this.upquestionList!=""){
+            this.upquestionList=""
+          }
+          this.upquestionList=JSON.parse(test)
+          console.log(this.upquestionList);
+          // console.log(this.upquestionList);
+          // console.log(item.questionStr);
+        })
+      })
+    }
+
+  },
+  mounted(){
+    axios({
+            url:'http://localhost:8080/quiz/search',
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            },
+            data:{
+              quiz_name:"",
+              start_data:"",
+              end_data:"",
+              is_longin:true,
+            //   Object.values(this.question).map(question => question)
+              is_published:false
+            },
+          }).then(res=>{
+            // console.log(res.data.quizList)
+            this.search.push(res.data.quizList)
+            console.log(this.search);
+            })
+            console.log(this.search);
   }
 }
 </script>
 <style scoped lang="scss">
   .main{
     width: 200vmin;
-    height: 70vmin;
+    height: 90vmin;
     margin-top: 50px;
     margin-left: 3%;
     // margin-bottom: 50vmin;
@@ -217,15 +284,16 @@ export default {
       width: 90%;
       margin-left: 5%;
       margin-top: 2vmin;
-      .fa-trash{
-        font-size: 5vmin;
-        margin-right: 1vmin;
-        cursor: pointer;
-      }
+      
       .fa-plus{
         font-size: 5vmin;
         cursor: pointer;
       }
     }
+    .fa-trash{
+        font-size: 4vmin;
+        margin-right: 1vmin;
+        cursor: pointer;
+      }
   }
 </style>

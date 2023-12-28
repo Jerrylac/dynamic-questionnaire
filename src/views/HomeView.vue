@@ -137,7 +137,26 @@ export default {
     }
   },
   mounted() {
-    // this.test();
+    axios({
+            url:'http://localhost:8080/quiz/search',
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            },
+            data:{
+              quiz_name:"",
+              start_data:"",
+              end_data:"",
+              is_longin:false,
+            //   Object.values(this.question).map(question => question)
+              is_published:true
+            },
+          }).then(res=>{
+            console.log(res.data)
+            // this.search.push(res.data.quizList)
+            // console.log(this.search);
+            })
+            // console.log(this.search);
   },
   methods:{
         goQuestionnaireContent(){
@@ -179,7 +198,7 @@ export default {
 <style scoped lang="scss">
   .main{
     width: 200vmin;
-    height: 70vmin;
+    height: 80vmin;
     margin-top: 50px;
     margin-left: 3%;
     // margin-bottom: 50vmin;
@@ -199,7 +218,7 @@ export default {
         // background-color:aquamarine;
         span{
           font-size: 20px;
-          margin-left: 10vmin;
+          margin-left: 5vmin;
           margin-right: 10px;
         }
         input{
@@ -212,7 +231,7 @@ export default {
         width: 94.5%;
         height: 40%;
         padding-top: 20px;
-        padding-left: 10vmin;
+        padding-left: 5vmin;
         // background-color: aqua;
         span{
           font-size: 20px;

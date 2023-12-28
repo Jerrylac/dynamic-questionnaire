@@ -25,30 +25,30 @@
                 <input type="text" name="" id="">
             </div>
         </div>
-        <div class="question" v-for="item in this.question">
-            <span>1.問題 使用v-for</span>
-            <div class="answer">
-                <input type="radio" name="" id="">
-                <span>我的回答</span>
-            </div>
-            <div class="answer1">
-                <input type="radio" name="" id="">
-                <span>我的回答</span>
+        <div class="question" v-for="(item, index) in this.arr">
+            <span>{{ index+1 }}.{{ item.title }}</span>
+            <div class="answer" v-for="opt in item.options">
+                <input type="radio" name="SingleChoice" id="" v-if="item.type=='單選題'">
+                <input type="checkbox" name="Check" id="" v-if="item.type=='復選題'">
+                <textarea class="form-control" id="message-text" v-if="item.type=='短述題'"></textarea>
+                <span >{{ opt }}<br></span>
             </div>
             
         </div>
         <div class="btnBox">
             <button type="button" class="del" @click="goHomeView()">儲存</button>
-            <button type="button" @click="goConfirmationPage()">儲存並發布</button>
+            <button type="button" class="del" @click="goConfirmationPage()">儲存並發布</button>
         </div>
     </div>
 </template>
 <script>
+import axios from 'axios';
+
 export default {
     data(){
         return{
             question:this.questionArr,
-            // arr:[],
+            arr:[],
             // //問題名稱
             // title:"",
             // //選項樣式
@@ -62,17 +62,79 @@ export default {
     },
     methods:{
         goHomeView(){
-            this.$router.push('/about')
+            axios({
+            url:'http://localhost:8080/quiz/create',
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            },
+            data:{
+              name:this.quizBox.name,
+              description:this.quizBox.defineComponent,
+              start_data:this.quizBox.startData,
+              end_data:this.quizBox.endDate,
+              question_list:this.question,
+            //   Object.values(this.question).map(question => question)
+              is_published:false
+            },
+          }).then(res=>{
+            console.log(res.data)
             window.alert("儲存成功")
+            this.$router.push('/about')
+            }).catch (error => {
+    if (error.response) {
+        // 這裡可以取得伺服器回應的詳細信息
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+    }
+    console.error('Error:', error);
+});
+            
         },
         goConfirmationPage(){
+            axios({
+            url:'http://localhost:8080/quiz/create',
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            },
+            data:{
+              name:this.quizBox.name,
+              description:this.quizBox.defineComponent,
+              start_data:this.quizBox.startData,
+              end_data:this.quizBox.endDate,
+              question_list:this.question,
+            //   Object.values(this.question).map(question => question)
+              is_published:true
+            },
+          }).then(res=>{
+            console.log(res.data)
+            window.alert("儲存並發送成功")
             this.$router.push('/about')
-            window.alert("已發布")
+            }).catch (error => {
+    if (error.response) {
+        // 這裡可以取得伺服器回應的詳細信息
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+    }
+    console.error('Error:', error);
+});
+            
         }
 
     },
     mounted(){
+        this.questionArr.forEach(element => {
+            
+            let opt= element.options.split(',')
+            this.arr.push({title:element.title,type:element.type,necessary:element.necessary,options:opt})
+        });
+        console.log(this.arr);
+        // console.log(this.questionArr);
         // this.arr.push(this.question)
+        // console.log(typeof (this.arr));
         // console.log(this.arr);
     },
     inject:[
@@ -87,8 +149,7 @@ export default {
     .main1{
         margin-top: 3vmin;
         background-color: white;
-        overflow-y: scroll;
-        overflow-x: hidden;
+        padding-bottom: 2vmin;
         .dataTime{
             width: 100%;
             padding-top: 2vmin;
@@ -155,8 +216,8 @@ export default {
         .btnBox{
             width: 40vmin;
             margin-top: 5vmin;
-            margin-left: 10vmin;
-            padding-left: 100vmin;
+            margin-left: 100vmin;
+            // display: flex;
             button{
                 width: 15vmin;
                 height: 5vmin;
@@ -166,24 +227,14 @@ export default {
             }
             .del{
                 background-color: aliceblue;
-            }
-            .del:hover{
+                &:hover{
                 background-color: rgb(198, 202, 207);
             }
+            }
+        }
+        textarea{
+            width: 50vmin;
         }
     }
-    .main1::-webkit-scrollbar{
-        width: 10px;
-      }
-      .main1::-webkit-scrollbar-track {
-        background: #3b73b8;
-        border-radius: 10px;
-      }
-      .main1::-webkit-scrollbar-thumb {
-        background: #aec3d7;
-        border-radius: 10px;
-      }
-      .main1::-webkit-scrollbar-thumb:hover {
-  background: #fff;
-}
+  
 </style>
