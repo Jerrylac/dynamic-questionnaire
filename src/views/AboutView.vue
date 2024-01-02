@@ -30,10 +30,10 @@
   </thead>
   <tbody v-for="item in this.search">
     <tr  v-for="(item1,index) in item">
-      <td><i class="fa-solid fa-trash"></i></td>
+      <td><i @click="delData(index)" class="fa-solid fa-trash"></i></td>
       <td>{{index+1}}</td>
       <td><button type="button" @click="upData(index)" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">{{ item1.name }}</button></td>
-      <td>{{item1.published}}</td>
+      <td >{{ getStatus(item1.startDate,item1.endDate,item1.published) }}</td>
       <td>{{ item1.startDate }}</td>
       <td>{{ item1.endDate }}</td>
       <td>123</td>
@@ -42,15 +42,24 @@
    
   </tbody>
 </table>
+<!-- <nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+    <li class="page-item"><a class="page-link" href="#">1</a></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+  </ul>
+</nav> -->
     </div>
-
+    
   </div>
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+        <h5 class="modal-title" id="exampleModalLabel">修改問卷</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -97,7 +106,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="reviseData()">確認修改</button>
+        <button type="button" class="btn btn-primary" @click="quizUpData()">僅儲存修改</button>
+        <button type="button" class="btn btn-primary" @click="quizUpDataPublished()">儲存修改並發布</button>
       </div>
     </div>
   </div>
@@ -113,6 +123,7 @@ export default {
       name:"",
       startData:"",
       endDate:"",
+      upNum:"",
       upName:"",
       upStartData:"",
       upEndDate:"",
@@ -155,12 +166,22 @@ export default {
             })
     },
     upData(index){
+      this.upNum=""
+      this.upName=""
+      this.upDescription=""
+      this.upStartData=""
+      this.upEndDate=""
+      this.upquestionList=""
       this.search.forEach(search=>{
         search.forEach((item,itemIndex)=>{
+          if(item.published){
+            return
+          }
           if(itemIndex!=index){
             return
           }
           let test=item.questionStr
+          this.upNum=item.num
           this.upName=item.name
           this.upDescription=item.description
           this.upStartData=item.startDate
@@ -169,11 +190,138 @@ export default {
             this.upquestionList=""
           }
           this.upquestionList=JSON.parse(test)
-          console.log(this.upquestionList);
+          console.log(this.upNum);
           // console.log(this.upquestionList);
           // console.log(item.questionStr);
         })
       })
+    },
+    quizUpData(){
+      console.log(this.upquestionList);
+      axios({
+            url:'http://localhost:8080/quiz/update',
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            },
+            params:{
+              quiz_num:this.upNum,
+            },
+            data:{
+              name:this.upName,
+              description:this.upDescription,
+              start_data:this.upStartData,
+              end_data:this.upEndDate,
+              question_list:this.upquestionList,
+              // is_published:true,
+            },
+          }).then(res=>{
+            window.alert("以儲存")
+            console.log(res.data);
+            })
+    },
+    quizUpDataPublished(){
+      console.log(this.upquestionList);
+      axios({
+            url:'http://localhost:8080/quiz/update',
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            },
+            params:{
+              quiz_num:this.upNum,
+            },
+            data:{
+              name:this.upName,
+              description:this.upDescription,
+              start_data:this.upStartData,
+              end_data:this.upEndDate,
+              question_list:this.upquestionList,
+              is_published:true,
+            },
+          }).then(res=>{
+            window.alert("以儲存並發布")
+            console.log(res.data);
+            })
+    },
+    delData(index){
+      
+      // console.log(this.search);
+      const btnDelete=window.confirm("確定要刪除嗎?")
+      this.search.forEach((item,index1)=>{
+        item.forEach((quiz,index2)=>{
+          // console.log(quiz);
+          if(index!=index2){
+            return
+          }
+          console.log(quiz.num);
+          fetch(('http://localhost:8080/quiz/delete'+'?'+'quiz_num_list='+quiz.num),{
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json'
+            }
+          }).then(res=>res.json())
+          .then(data=>{
+            console.log(data)
+            item.splice(index,1)
+          })
+        })
+        //   axios({
+        //         url:'http://localhost:8080/quiz/delete'+'?'+"quiz_num_list="+quiz.num,
+        //         method:'POST',
+        //         headers:{
+        //           'Content-Type':'application/json'
+        //         },
+        //         params:{
+        //           quiz_num_list:quiz.num,
+        //         },
+        //         data:{
+
+        //         }
+        //       }).then(res=>{
+        //         console.log(res);
+        //         })
+        // })
+      })
+      // this.search.forEach(search=>{
+      //   search.forEach((item,itemIndex)=>{
+      //     if(itemIndex!=index){
+      //       return
+      //     }
+      //     let test=item.questionStr
+      //     this.upNum=item.num
+      //     this.upName=item.name
+      //     this.upDescription=item.description
+      //     this.upStartData=item.startDate
+      //     this.upEndDate=item.endDate
+      //     if(this.upquestionList!=""){
+      //       this.upquestionList=""
+      //     }
+      //     this.upquestionList=JSON.parse(test)
+      //     console.log(this.upNum);
+      //     // console.log(this.upquestionList);
+      //     // console.log(item.questionStr);
+      //   })
+      // })
+    },
+    getStatus(startDate,endDate,published){
+      const now =new Date();
+      const startTime =new Date(startDate);
+      const endTime =new Date(endDate);
+      if(now<startTime&&published){
+        return '尚未開始(已發布)'
+      }
+      else if(now<startTime&&!published){
+        return '尚未開始(未發布)'
+      }
+      else if(now>=startTime&&now<=endTime){
+        return '進行中'
+      }
+      else{
+        return '已結束'
+      }
+
+      
     }
 
   },
@@ -204,7 +352,7 @@ export default {
 <style scoped lang="scss">
   .main{
     width: 200vmin;
-    height: 90vmin;
+    height: 105vmin;
     margin-top: 50px;
     margin-left: 3%;
     // margin-bottom: 50vmin;

@@ -3,15 +3,15 @@
     <div class="top">
       <div class="nameInp">
         <span>問卷名稱:</span>
-        <input type="text"  name="" id="">
+        <input type="text" v-model="this.name"  name="" id="">
         <!-- v-model="this.search.name" -->
       </div>
       <div class="timeInp">
         <span>開始時間:</span>
-        <input type="date" name="" id="" v-model="this.search.stardate">
+        <input type="date" name="" id="" v-model="this.startData">
         <span>結束時間:</span>
-        <input type="date" name="" id="" v-model="this.search.enddate">
-        <button type="button" @click="">搜尋</button>
+        <input type="date" name="" id="" v-model="this.endData">
+        <button type="button"  @click="getdata()">搜尋</button>
       </div>
     </div>
     <div class="bottom">
@@ -24,92 +24,72 @@
     <td>結束時間</td>
     <td>結果</td>
   </thead>
-  <tbody>
-    <tr>
-      <td>編號1</td>
-      <td class="chLink" @click="goQuestionnaireContent()">一個名稱</td>
-      <td><input type="text" v-model="userInfo.account" name="" id=""></td>
-      <td><input type="text" v-model="userInfo.password" name="" id=""></td>
-      <td>123</td>
-      <td class="chLink" @click="loginUser()">前往</td>
-    </tr>
-    <tr>
-      <td>編號2</td>
-      <td><input type="text" v-model="this.search.name" name="" id=""></td>
-      <td><input type="text" v-model="this.search.description" name="" id=""></td>
-      <td><input type="date" v-model="this.search.stardate" name="" id=""></td>
-      <td><input type="date" v-model="this.search.enddate" name="" id=""></td>
-      <td class="chLink" @click="test()">123</td>
-    </tr>
-    <tr>
-      <td>編號3</td>
-      <td><input type="text" v-model="this.search.questionList" name="" id=""></td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td>編號4</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td>編號5</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td>編號6</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td>編號7</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td>編號8</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td>編號9</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-    </tr>
-    <tr>
-      <td>編號10</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
-      <td>123</td>
+  <tbody v-for="(item) in frontDesk">
+    <tr v-for="(item1,index) in item">
+      <td>{{index+1}}</td>
+      <td><button type="button" @click="questionData(index)" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">{{ item1.name }}</button></td>
+      <td>{{ item1.published }}</td>
+      <td>{{ item1.startDate }}</td>
+      <td>{{ item1.endDate }}</td>
+      <td>前往</td>
     </tr>
   </tbody>
 </table>
     </div>
 
   </div>
+   <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{{this.title}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" >
+        <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">姓名:</label>
+            <input type="text" v-model="this.questionName" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">手機:</label>
+            <input type="number" v-model="this.questionPhone" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">郵件:</label>
+            <input type="email" v-model="this.questionEmail" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">年齡:</label>
+            <input type="number" v-model="this.questionAge" class="form-control" id="recipient-name">
+          </div>
+        <form class="" v-for="(item,index) in this.question">
+          <div class="mb-3 question">
+            <label for="recipient-name" class="col-form-label">{{index+1}}.</label>
+            <label for="recipient-name" class="col-form-label" v-if="item.necessary==true">{{item.title}}(必填):</label>
+            <label for="recipient-name" class="col-form-label" v-if="item.necessary==false">{{item.title}}:</label>
+            <!-- <input type="text" v-model="item.options" class="form-control" id="recipient-name"> -->
+          </div>
+          <div class="mb-3" v-for="(opt,optIndex) in this.options">
+            <div class="test" v-for="item1 in opt">
+              <input type="radio" class="SingleChoice"  name="SingleChoice"  id="" v-if="item.type=='單選題'&&index==optIndex">
+              <input type="checkbox" class="Check" name="Check" id="" v-if="item.type=='復選題'&&index==optIndex">
+              <textarea class="form-control message" name="message" id="message-text" v-if="item.type=='短述題'&&index==optIndex"></textarea>
+              <span v-if="index==optIndex">{{ item1 }}</span>
+            </div>
+            <!-- <span>{{ optIndex }}</span> -->
+            
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="write()">確認</button>
+        <!-- <button type="button" class="btn btn-primary" @click="writeTest2 ()">12確認</button> -->
+      </div>
+    </div>
+  </div>
+</div>
 </template>
 <script>
 import axios from 'axios';
@@ -132,8 +112,40 @@ export default {
           type:"",
           necessary:false,
           options:""
-        }]
-      }
+        }],
+        
+      },
+      frontDesk:[],
+      name:"",
+      startData:"",
+      endDate:"",
+      
+      // optionsAnswer:[],
+
+      questionNum:"",
+      question:"",
+      questionName:"",
+      questionPhone:"",
+      questionEmail:"",
+      questionAge:"",
+      questionAnswerSingleChoice:"",
+      questionAnswerCheck:"",
+      questionAnswerMessage:"",
+
+      Answer:[],
+      AnswerRadio:"",
+
+      title:"",
+      arr:[],
+      options:[],
+
+      type:"",
+      necessary:"",
+
+
+      testans:"",
+
+      puion:[]
     }
   },
   mounted() {
@@ -152,11 +164,19 @@ export default {
               is_published:true
             },
           }).then(res=>{
-            console.log(res.data)
-            // this.search.push(res.data.quizList)
-            // console.log(this.search);
-            })
-            // console.log(this.search);
+            this.frontDesk.push(res.data.quizList)
+            
+            // console.log(this.frontDesk)
+            
+            
+          })
+    let test=[{"qNum":1,"optionList":["BBB"]},{"qNum":2,"optionList":["^____^"]}]
+    this.testans=JSON.stringify(test)
+    console.log(this.testans);
+    // console.log(test);
+
+
+
   },
   methods:{
         goQuestionnaireContent(){
@@ -175,22 +195,241 @@ export default {
             },
           }).then(res=>console.log(res))
         },
-        test(){
+        test(index){
+          this.frontDesk.forEach(item=>{
+            console.log(index=1);
+            console.log(item);
+          })
+        },
+        getdata(){  
           axios({
-            url:'http://localhost:8080/quiz/create',
+              url:'http://localhost:8080/quiz/search',
+              method:'POST',
+              headers:{
+                'Content-Type':'application/json'
+              },
+              data:{
+                quiz_name:this.name,
+                start_data:this.startData,
+                end_data:this.endDate,
+                is_longin:false,
+              //   Object.values(this.question).map(question => question)
+                is_published:true
+              },
+            }).then(res=>{
+              if(this.frontDesk.length!=0){
+                this.frontDesk.length=0
+                this.frontDesk.push(res.data.quizList)
+                this.name=""
+                this.startData=""
+                this.endDate=""
+                console.log(res.data)
+                return
+              }
+
+
+              // console.log(this.search);
+              })
+        },
+        questionData(index){
+          if(this.options.length!=0){
+            this.options.length=0
+          }
+          this.frontDesk.forEach(frontDesk=>{
+            frontDesk.forEach((item,itemIndex)=>{
+              if(itemIndex!=index){
+                return
+              }
+              // let opt=item.options.split(',')
+              this.title=item.name
+              this.questionNum=item.num
+              // this.arr.push(opt)
+              if(this.question!=""){
+                  this.question=""
+                }
+              this.question=JSON.parse(item.questionStr)
+              this.question.forEach(item=>{
+                this.options.push(item.options.split(','))
+                // console.log(this.options);
+              })
+              // console.log(this.questionNum);
+            })
+          })
+        },
+        write(){
+          const question=document.querySelectorAll(".question")
+          const test=document.querySelectorAll(".SingleChoice")
+          const test1=document.querySelectorAll(".Check")
+          const test2=document.querySelectorAll(".message")
+          this.Answer=[]
+          this.question.forEach(item=>{
+            this.options.forEach(opt=>{
+              if(item.options!=opt){
+                return
+              }
+              item.options=opt
+            })
+            console.log(item);
+          })
+
+          test.forEach((test,testIndex)=>{
+            if(test.checked){
+              this.question.forEach((question,questionIndex)=>{
+                console.log();
+                if(question.type=="單選題"){
+                  const optValues  = Object.values(question.options);
+                  this.Answer.push({ qNum: questionIndex+1, optionList: [optValues[testIndex]] });
+                }
+                
+              })
+            }
+            
+          })
+          test1.forEach((test1,test1Index)=>{
+            if(test1.checked){
+              this.question.forEach((question,questionIndex)=>{
+                if(question.type=="復選題"){
+                  const optValues  = Object.values(question.options);
+                  this.Answer.push({ qNum: questionIndex+1, optionList: [optValues[test1Index]] });
+                }
+              })
+            }
+          })
+          console.log(this.Answer);
+          axios({
+            url:'http://localhost:8080/write/write',
             method:'POST',
             headers:{
               'Content-Type':'application/json'
             },
             data:{
-              name:this.search.name,
-              description:this.search.description,
-              start_data:this.search.stardate,
-              end_data:this.search.enddate,
-              question_list:this.search.questionList
+              quizNum:this.questionNum,
+              name:this.questionName,
+              phone:this.questionPhone,
+              email:this.questionEmail,
+              age:this.questionAge,
+              answer:JSON.stringify(this.Answer),
             },
-          }).then(res=>console.log(res))
+          }).then(res=>{
+            console.log(res.data);
+            window.alert("感謝您的填寫")
+            
+            // console.log(this.frontDesk)
+            
+            
+          })
+        },
+        writeTest(){
+          
+          const question=document.querySelectorAll(".question")
+          const test=document.querySelectorAll(".SingleChoice")
+          const test1=document.querySelectorAll(".Check")
+          const test2=document.querySelectorAll(".message")
+          this.Answer=[]
+          //單選
+          test.forEach((test,testIndex)=>{
+            if (test.checked){
+              this.question.forEach(question=>{
+                const test=question.options.split(',')
+                test.forEach((item,index)=>{
+                  if(testIndex==index){
+                    console.log(question.title);
+                  }
+                  console.log(index)
+                })
+              })
+              const optValues  = Object.values(this.options[0]);
+              this.Answer.push({ question: 123, options: optValues[testIndex] });
+              // console.log(testIndex);
+            }
+          })
+          console.log(this.Answer);
+          //複選
+          test1.forEach((test1,test1Index)=>{
+            if (test1.checked){
+              // console.log(test1Index);
+            }
+          })
+          //選項
+           this.options.forEach((opt,optIndex)=>[
+            
+            opt.forEach((op,opIndex)=>{
+              // console.log(opIndex);
+            }),
+            // console.log(optIndex)
+           ])
+          //問題
+          this.question.forEach((question,questionIndex)=>{
+            // console.log(questionIndex);
+          })
+        },
+        writeTest1(){
+          const test=document.querySelectorAll(".SingleChoice")
+          const test1=document.querySelectorAll(".Check")
+          const test2=document.querySelectorAll(".message")
+          const obj={}
+          for(const key in test){
+            if(Object.prototype.hasOwnProperty.call(test,key)){
+              obj[key]=test[key]
+            }
+          }
+          for(const key in test1){
+            if(Object.prototype.hasOwnProperty.call(test1,key)){
+              if (obj[key] !== undefined) {
+                if (Array.isArray(obj[key])){
+                  obj[key].push(test1[key]);
+                }else{
+                  obj[key] = [obj[key], test1[key]];
+                }
+              }else{
+                obj[key] = test1[key];
+              }
+            }
+          }
+          console.log(obj);
+        },
+        writeTest2(){
+          const question=document.querySelectorAll(".question")
+          const test=document.querySelectorAll(".SingleChoice")
+          const test1=document.querySelectorAll(".Check")
+          const test2=document.querySelectorAll(".message")
+          this.Answer=[]
+          this.question.forEach(item=>{
+            this.options.forEach(opt=>{
+              if(item.options!=opt){
+                return
+              }
+              item.options=opt
+            })
+            console.log(item);
+          })
+
+          test.forEach((test,testIndex)=>{
+            if(test.checked){
+              this.question.forEach((question,questionIndex)=>{
+                console.log();
+                if(question.type=="單選題"){
+                  const optValues  = Object.values(question.options);
+                  this.Answer.push({ qNum: questionIndex+1, optionList: [optValues[testIndex]] });
+                }
+                
+              })
+            }
+            
+          })
+          test1.forEach((test1,test1Index)=>{
+            if(test1.checked){
+              this.question.forEach((question,questionIndex)=>{
+                if(question.type=="復選題"){
+                  const optValues  = Object.values(question.options);
+                  this.Answer.push({ qNum: questionIndex+1, optionList: [optValues[test1Index]] });
+                }
+              })
+            }
+          })
+          console.log(JSON.stringify(this.Answer));
         }
+
     },
     
 }
@@ -276,6 +515,10 @@ export default {
           text-decoration: underline;
         }
       }
+    }
+    td{
+      border-right: 1px solid black;
+      border-bottom: 1px solid black;
     }
   }
 </style>
