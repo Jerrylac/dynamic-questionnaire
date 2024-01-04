@@ -15,7 +15,8 @@
           <input type="text" v-model="this.querstionArr.name" name="" id="" />
         </div>
         <div class="illustrate">
-          <p>問卷說明<span class="text">(限200字)</span>:</p>
+          <p>問卷說明:</p>
+          <!-- <span class="text">(限200字)</span> -->
           <input
             type="text"
             v-model="this.querstionArr.defineComponent"
@@ -74,12 +75,20 @@ export default {
   },
   methods: {
     goTopic() {
+      if(this.querstionArr.name==""||this.querstionArr.description==""||this.querstionArr.startData=="",this.querstionArr.endDate==""){
+        window.alert("資料不能為空")
+        return
+      }
       this.test=!this.test
     },
     getquestion() {
       this.test = false;
     },
     getTopic() {
+      if(this.querstionArr.name==""||this.querstionArr.description==""||this.querstionArr.startData=="",this.querstionArr.endDate==""){
+        window.alert("資料不能為空")
+        return
+      }
       this.test = true;
     },
     // gettest(xxx) {

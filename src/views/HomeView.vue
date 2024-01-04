@@ -10,7 +10,7 @@
         <span>開始時間:</span>
         <input type="date" name="" id="" v-model="this.startData">
         <span>結束時間:</span>
-        <input type="date" name="" id="" v-model="this.endData">
+        <input type="date" name="" id="" v-model="this.endDate">
         <button type="button"  @click="getdata()">搜尋</button>
       </div>
     </div>
@@ -28,7 +28,7 @@
     <tr v-for="(item1,index) in item">
       <td>{{index+1}}</td>
       <td><button type="button" @click="questionData(index)" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">{{ item1.name }}</button></td>
-      <td>{{ item1.published }}</td>
+      <td>{{ getStatus(item1.startDate,item1.endDate) }}</td>
       <td>{{ item1.startDate }}</td>
       <td>{{ item1.endDate }}</td>
       <td>前往</td>
@@ -74,7 +74,7 @@
             <div class="test" v-for="item1 in opt">
               <input type="radio" class="SingleChoice"  name="SingleChoice"  id="" v-if="item.type=='單選題'&&index==optIndex">
               <input type="checkbox" class="Check" name="Check" id="" v-if="item.type=='復選題'&&index==optIndex">
-              <textarea class="form-control message" name="message" id="message-text" v-if="item.type=='短述題'&&index==optIndex"></textarea>
+              <textarea class="form-control message" name="message" v-model="this.message" id="message-text" v-if="item.type=='短述題'&&index==optIndex"></textarea>
               <span v-if="index==optIndex">{{ item1 }}</span>
             </div>
             <!-- <span>{{ optIndex }}</span> -->
@@ -85,7 +85,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="write()">確認</button>
-        <!-- <button type="button" class="btn btn-primary" @click="writeTest2 ()">12確認</button> -->
+        <button type="button" class="btn btn-primary" @click="writeTest2 ()">12確認</button>
       </div>
     </div>
   </div>
@@ -145,7 +145,9 @@ export default {
 
       testans:"",
 
-      puion:[]
+      puion:[],
+
+      message:""
     }
   },
   mounted() {
@@ -262,6 +264,7 @@ export default {
           const test1=document.querySelectorAll(".Check")
           const test2=document.querySelectorAll(".message")
           this.Answer=[]
+          
           this.question.forEach(item=>{
             this.options.forEach(opt=>{
               if(item.options!=opt){
@@ -295,6 +298,15 @@ export default {
               })
             }
           })
+          test2.forEach((tets2,test2Index)=>{
+              this.question.forEach((question,questionIndex)=>{
+                if(question.type=="短述題"){
+                  // const optValues  = Object.values(question.options);
+                  this.Answer.push({ qNum: questionIndex+1, optionList: [this.message] });
+                }
+              })
+            
+          })
           console.log(this.Answer);
           axios({
             url:'http://localhost:8080/write/write',
@@ -313,7 +325,10 @@ export default {
           }).then(res=>{
             console.log(res.data);
             window.alert("感謝您的填寫")
-            
+            this.questionName=""
+            this.questionPhone=""
+            this.questionEmail=""
+            this.questionAge=""
             // console.log(this.frontDesk)
             
             
@@ -427,8 +442,31 @@ export default {
               })
             }
           })
+          test2.forEach((tets2,test2Index)=>{
+            console.log(test);
+              this.question.forEach((question,questionIndex)=>{
+                if(question.type=="短述題"){
+                  // const optValues  = Object.values(question.options);
+                  this.Answer.push({ qNum: questionIndex+1, optionList: [this.message] });
+                }
+              })
+            
+          })
           console.log(JSON.stringify(this.Answer));
-        }
+        },
+        getStatus(startDate,endDate){
+          const now =new Date();
+          const startTime =new Date(startDate);
+          const endTime =new Date(endDate);
+          if(now>=startTime&&now<=endTime){
+            return '進行中'
+          }
+          else{
+            return '已結束'
+          }
+
+      
+    }
 
     },
     
@@ -437,7 +475,7 @@ export default {
 <style scoped lang="scss">
   .main{
     width: 200vmin;
-    height: 80vmin;
+    // height: 80vmin;
     margin-top: 50px;
     margin-left: 3%;
     // margin-bottom: 50vmin;

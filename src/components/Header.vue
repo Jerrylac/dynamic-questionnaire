@@ -1,8 +1,8 @@
 <template>
     <div>
         <div class="headerShow">
-            <RouterLink to="/" class="link">前端</RouterLink>
-            <RouterLink to="/about" class="link">後端</RouterLink>
+            <RouterLink to="/" class="link">前台</RouterLink>
+            <RouterLink to="/about" class="link">後台</RouterLink>
         </div>
     </div>
 </template>

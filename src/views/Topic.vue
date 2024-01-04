@@ -136,6 +136,10 @@ export default {
             // this.$router.push('/AddNewInformation/Questionnaire')
         },
         goQuestionnaireContent(){
+            if(this.question.length==0){
+                window.alert("問題不能為空")
+                return
+            }
             this.boxBo=true
             this.$emit("question",this.left1)
             // this.$router.push('/QuestionnaireConfirmation')

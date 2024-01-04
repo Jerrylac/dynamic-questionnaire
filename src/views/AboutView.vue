@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div class="main" v-if="!this.feedbackAndStatistics">
     <div class="top">
       <div class="nameInp">
         <span>問卷名稱:</span>
@@ -36,7 +36,7 @@
       <td >{{ getStatus(item1.startDate,item1.endDate,item1.published) }}</td>
       <td>{{ item1.startDate }}</td>
       <td>{{ item1.endDate }}</td>
-      <td>123</td>
+      <td><button type="button" @click="goQuestionnaireContent(index)" class="btn">查看</button></td>
       <!-- {{ item1.questionStr }} -->
     </tr>
    
@@ -54,7 +54,7 @@
     </div>
     
   </div>
-  <!-- Modal -->
+  <!-- UpDataModal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -112,9 +112,70 @@
     </div>
   </div>
 </div>
+<!-- 查看Modal
+<div class="modal fade" id="CheckModal" tabindex="-1" aria-labelledby="CheckModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header question">
+        <h5 class="modal-title feedback" id="exampleModalLabel">問卷回饋</h5>
+        <h5 class="modal-title statistics" id="exampleModalLabel">問卷統計</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">問卷名稱:</label>
+            <input type="text" v-model="this.upName" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">問卷說明:</label>
+            <textarea v-model="this.upDescription" class="form-control" id="message-text"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">開始時間:</label>
+            <input type="date" v-model="this.upStartData" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">結束時間:</label>
+            <input type="date" v-model="this.upEndDate" class="form-control" id="recipient-name">
+          </div>
+          <div class="queiont" v-for="(item,index) in upquestionList">
+            <div class="num">第{{ index+1 }}題</div>
+            <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">問題名稱:</label>
+            <input type="text" v-model="item.title" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <select v-model="item.type" name="" id="">
+                <option value="">請選擇</option>
+                <option value="單選題">單選題</option>
+                <option value="復選題">復選題</option>
+                <option value="短述題">短述題</option>
+            </select>
+            <input type="checkbox" class="chBox" name="necessary" value="true" v-model="item.necessary" id="">
+            <span>必填</span>
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">選項(有多筆問題請以 , 分隔):</label>
+            <textarea v-model="item.options" class="form-control" id="message-text"></textarea>
+          </div>
+          <hr>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+<div class="question" v-if="feedbackAndStatistics">
+  <Questionnaire :questionTextArr="this.questionText"/>
+</div>
 </template>
 <script>
 import axios from 'axios';
+import Questionnaire from './Questionnaire.vue'
 
 export default {
   data(){
@@ -129,9 +190,26 @@ export default {
       upEndDate:"",
       upDescription:"",
       upquestionList:"",
+      feedbackAndStatistics:false,
+      questionText:""
     }
   },
+  components:{
+    Questionnaire
+  },
   methods:{
+    goQuestionnaireContent(index){
+      // console.log(index);
+      this.search.forEach(search=>{
+        search.forEach((item,itemIndex)=>{
+          if(itemIndex!=index){
+            return
+          }
+          this.questionText=item
+        })
+      })
+      this.feedbackAndStatistics=true
+    },
     goAddNewInformation(){
             this.$router.push('/AddNewInformation')
     },
@@ -248,41 +326,44 @@ export default {
       
       // console.log(this.search);
       const btnDelete=window.confirm("確定要刪除嗎?")
-      this.search.forEach((item,index1)=>{
-        item.forEach((quiz,index2)=>{
-          // console.log(quiz);
-          if(index!=index2){
-            return
-          }
-          console.log(quiz.num);
-          fetch(('http://localhost:8080/quiz/delete'+'?'+'quiz_num_list='+quiz.num),{
-            method:'POST',
-            headers:{
-              'Content-Type':'application/json'
-            }
-          }).then(res=>res.json())
-          .then(data=>{
-            console.log(data)
-            item.splice(index,1)
-          })
-        })
-        //   axios({
-        //         url:'http://localhost:8080/quiz/delete'+'?'+"quiz_num_list="+quiz.num,
-        //         method:'POST',
-        //         headers:{
-        //           'Content-Type':'application/json'
-        //         },
-        //         params:{
-        //           quiz_num_list:quiz.num,
-        //         },
-        //         data:{
+      if(btnDelete){
 
-        //         }
-        //       }).then(res=>{
-        //         console.log(res);
-        //         })
-        // })
-      })
+        this.search.forEach((item,index1)=>{
+          item.forEach((quiz,index2)=>{
+            // console.log(quiz);
+            if(index!=index2){
+              return
+            }
+            console.log(quiz.num);
+            fetch(('http://localhost:8080/quiz/delete'+'?'+'quiz_num_list='+quiz.num),{
+              method:'POST',
+              headers:{
+                'Content-Type':'application/json'
+              }
+            }).then(res=>res.json())
+            .then(data=>{
+              console.log(data)
+              item.splice(index,1)
+            })
+          })
+          //   axios({
+          //         url:'http://localhost:8080/quiz/delete'+'?'+"quiz_num_list="+quiz.num,
+          //         method:'POST',
+          //         headers:{
+          //           'Content-Type':'application/json'
+          //         },
+          //         params:{
+          //           quiz_num_list:quiz.num,
+          //         },
+          //         data:{
+  
+          //         }
+          //       }).then(res=>{
+          //         console.log(res);
+          //         })
+          // })
+        })
+      }
       // this.search.forEach(search=>{
       //   search.forEach((item,itemIndex)=>{
       //     if(itemIndex!=index){
@@ -352,7 +433,7 @@ export default {
 <style scoped lang="scss">
   .main{
     width: 200vmin;
-    height: 105vmin;
+    // height: 105vmin;
     margin-top: 50px;
     margin-left: 3%;
     // margin-bottom: 50vmin;
@@ -443,5 +524,34 @@ export default {
         margin-right: 1vmin;
         cursor: pointer;
       }
+      
+  }
+  .question{
+    text-align: center;
+  }
+  .feedback{
+    width: 13vmin;
+    height: 4vmin;
+    background-color: #E3651D;
+    margin-left: 1vmin;
+    border-radius: 1vmin;
+    cursor:pointer;
+    &:hover{
+      background-color: #AE445A;
+      color: white;
+    }
+  }
+  
+  .statistics{
+    width: 13vmin;
+    height: 4vmin;
+    background-color: #E3651D;
+    margin-left: 1vmin;
+    border-radius: 1vmin;
+    cursor:pointer;
+    &:hover{
+      background-color: #AE445A;
+      color: white;
+    }
   }
 </style>
